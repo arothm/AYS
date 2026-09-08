@@ -1,6 +1,6 @@
 {
   "//": [
-    "AC Code Skill - OPTIONAL continuous mode. This file is deliberately named",
+    "AYC Skill - OPTIONAL continuous mode. This file is deliberately named",
     ".example so installing the plugin does NOT activate it. Hooks run commands on",
     "your machine with your permissions, and the skill's own rule is that hooks are",
     "shown and chosen, never installed silently.",
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python \"${CLAUDE_PLUGIN_ROOT}/skills/ac-code-skill/scripts/recall.py\" \"session start: current branch work\" --root .ac-code-skill --top 4 || true",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/skills/ayc-skill/scripts/recall.py\" \"session start: current branch work\" --root .ayc-skill --top 4 || true",
             "timeout": 15
           }
         ]
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git diff --cached 2>/dev/null | python \"${CLAUDE_PLUGIN_ROOT}/skills/ac-code-skill/scripts/redact.py\" --strict >/dev/null",
+            "command": "git diff --cached 2>/dev/null | python \"${CLAUDE_PLUGIN_ROOT}/skills/ayc-skill/scripts/redact.py\" --strict >/dev/null",
             "timeout": 20
           }
         ]
@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test -d .ac-code-skill && echo 'If anything changed outside a run (fix, deploy, incident, decision), capture it: ac-code-skill record \"<what happened>\"' || true",
+            "command": "test -d .ayc-skill && echo 'If anything changed outside a run (fix, deploy, incident, decision), capture it: ayc-skill record \"<what happened>\"' || true",
             "timeout": 5
           }
         ]

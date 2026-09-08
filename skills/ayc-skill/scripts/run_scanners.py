@@ -34,6 +34,14 @@ import shutil
 import subprocess
 import sys
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    # Windows consoles default to cp1252 and would mangle the em dashes and arrows
+    # this prints. Matches the guard the other helpers already carry.
+except Exception:
+    pass
+
 
 def has(tool):
     return shutil.which(tool) is not None

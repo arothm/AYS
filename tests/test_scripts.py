@@ -22,7 +22,7 @@ import zipfile
 from contextlib import redirect_stdout, redirect_stderr
 
 SKILL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     "skills", "ac-code-skill")
+                     "skills", "ayc-skill")
 sys.path.insert(0, os.path.join(SKILL, "scripts"))
 
 import design_system  # noqa: E402
@@ -33,6 +33,7 @@ import run_scanners  # noqa: E402
 import server_audit  # noqa: E402
 import standards  # noqa: E402
 import to_sarif  # noqa: E402
+import with_server  # noqa: E402
 
 
 def run(main, argv):
@@ -413,7 +414,7 @@ class TestRunScanners(unittest.TestCase):
 
 
 # -------------------------------------------------------------------- to_sarif
-REPORT = """# AC Code Skill - Review Report
+REPORT = """# AYC Skill - Review Report
 
 **Verdict:** NEEDS WORK
 
@@ -447,7 +448,7 @@ class TestToSarif(unittest.TestCase):
         doc = to_sarif.to_sarif(to_sarif.parse(REPORT))
         self.assertEqual(doc["version"], "2.1.0")
         run_ = doc["runs"][0]
-        self.assertEqual(run_["tool"]["driver"]["name"], "ac-code-skill")
+        self.assertEqual(run_["tool"]["driver"]["name"], "ayc-skill")
         self.assertEqual(len(run_["results"]), 3)
         levels = sorted(r["level"] for r in run_["results"])
         self.assertEqual(levels, ["error", "note", "warning"])
@@ -510,6 +511,92 @@ class TestToSarif(unittest.TestCase):
         emitted pointing at the wrong line."""
         for f in to_sarif.parse("- [blocking] src/a.ts:42 �� boom. Fix: guard."):
             self.assertNotEqual((f["path"], f["line"]), ("src/a.ts", 1))
+
+
+# ------------------------------------------------------------------ with_server
+class TestWithServer(unittest.TestCase):
+    """Regression: teardown killed the shell, not the server.
+
+    `shell=True` puts a shell between the runner and the server, so the handle it
+    held was the shell's. terminate() ended that and left the server listening,
+    while the runner printed "servers stopped" - a false claim AND a bound port
+    that made the next run's server fail to start.
+    """
+
+    def test_spawn_isolates_the_process_tree(self):
+        import inspect
+        src = inspect.getsource(with_server.spawn)
+        if with_server.IS_WINDOWS:
+            self.assertIn("CREATE_NEW_PROCESS_GROUP", src)
+        else:
+            self.assertIn("start_new_session", src)
+
+    def test_stop_kills_the_whole_tree_not_just_the_shell(self):
+        import inspect
+        src = inspect.getsource(with_server.stop)
+        self.assertTrue("taskkill" in src and "/T" in src,
+                        "Windows teardown must walk the process tree")
+        self.assertIn("killpg", src, "POSIX teardown must signal the process group")
+
+    def test_teardown_is_verified_not_asserted(self):
+        """The runner must probe the port after teardown, not just claim success."""
+        import inspect
+        src = inspect.getsource(with_server.main)
+        self.assertIn("port_is_open", src)
+        self.assertIn("still listening after teardown", src)
+
+    def test_port_is_open_reports_a_closed_port_as_closed(self):
+        # A port nothing is bound to must read as closed, or the leak check is noise.
+        self.assertFalse(with_server.port_is_open("127.0.0.1", 9))
+
+    def test_mismatched_server_and_port_counts_are_rejected(self):
+        code, out, err = run(with_server.main,
+                             ["--server", "sleep 1", "--", "true"])
+        self.assertEqual(code, 2)
+        self.assertIn("matching --port", err)
+
+
+# ------------------------------------------------------------------ font imports
+class TestFontImports(unittest.TestCase):
+    """Regression: a pairing needing two provider requests only made one.
+
+    Fontshare answers a multi-family `f[]=a&f[]=b` query with the FIRST family
+    only, with a 200 and no error - so the body font silently fell back to
+    system sans on every page the generator specced.
+    """
+
+    def test_every_declared_family_appears_in_some_import_url(self):
+        fonts = design_system.load("font-pairings")
+        for f in fonts:
+            if f["provider"] == "system":
+                continue
+            urls = " ".join(design_system.import_urls(f)).lower()
+            for fam in (f["heading"], f["body"], f.get("mono") or ""):
+                if not fam:
+                    continue
+                self.assertIn(design_system.normalise(fam), design_system.normalise(urls),
+                              "%s: '%s' is never loaded by any import URL" % (f["id"], fam))
+
+    def test_fontshare_requests_one_family_per_url(self):
+        """Fontshare drops every family after the first, so never batch them."""
+        for f in design_system.load("font-pairings"):
+            if f["provider"] != "fontshare":
+                continue
+            for url in design_system.import_urls(f):
+                self.assertEqual(url.count("f[]="), 1,
+                                 "%s batches families into one fontshare request; "
+                                 "only the first would load" % f["id"])
+
+    def test_emitted_css_imports_every_url(self):
+        spec = design_system.compose(
+            "bold creative agency launch",
+            design_system.load("product-rules"), design_system.load("styles"),
+            design_system.load("palettes"), design_system.load("font-pairings"),
+            overrides={"font": "clash-switzer"},
+            motions=design_system.load("motion-libraries"))
+        md = design_system.render_markdown(spec)
+        for url in design_system.import_urls(spec["font"]):
+            self.assertIn(url, md, "emitted CSS omits an import the pairing needs")
 
 
 # ------------------------------------------------------------------ data files

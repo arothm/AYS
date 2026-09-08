@@ -11,12 +11,16 @@ real value before you run a command or send a dispatch.
 
 ## Step 0 — Memory
 
-Check for `.ac-code-skill/memory.md`. If it exists, read it — it is the project
-briefing every agent inherits. If not, create `.ac-code-skill/` (git-ignored — add it to `.gitignore` if
+Check for `.ayc-skill/memory.md`. If it exists, read it — it is the project
+briefing every agent inherits. If not, create `.ayc-skill/` (git-ignored — add it to `.gitignore` if
 absent) and seed `memory.md` after Step 1's detection pass.
 
+If a pre-rename `.ac-code-skill/` or `.fleet/` directory exists, migrate it into
+`.ayc-skill/` and remove the old one before anything else reads memory — two
+workspaces side by side drift apart and an agent will read the stale one.
+
 `references/memory.md` has the layout, the single-writer rule, the *Agent
-learnings* store, the privacy gate, and the template.
+learnings* store, the privacy gate, the migration rule, and the template.
 
 ---
 
@@ -69,7 +73,7 @@ check is unavailable and treat the phase as unverified.
 
 Launch every selected review agent **in a single turn** so they run concurrently —
 this is the point of the fleet. Prefer the shipped agent definitions
-(`ac-frontend`, `ac-backend`, `ac-security`, `ac-tester`, `ac-ai-engineer`); fall
+(`ayc-frontend`, `ayc-backend`, `ayc-security`, `ayc-tester`, `ayc-ai-engineer`); fall
 back to a general-purpose subagent with the phase rules stated in the prompt.
 
 **Each agent reviews only the surface it owns.** Overlapping territory is what
@@ -88,7 +92,7 @@ A dispatch is five short things:
 2. the detected **`{scope}`** and **`{commands}`** (real ones, from Step 1)
 3. the resolved **`{skill_dir}`** — substituted, never the literal placeholder
 4. the opening instruction:
-   `python "{skill_dir}/scripts/recall.py" "<the agent's task>" --root .ac-code-skill --role <role>`
+   `python "{skill_dir}/scripts/recall.py" "<the agent's task>" --root .ayc-skill --role <role>`
 5. the **context** for its standards (`private|commercial`, `web,api,ai`) — the
    agent runs `standards.py --agent <role> --compact --context <ctx>` itself
 
@@ -106,8 +110,8 @@ output caps + the phase rules, followed by the five items above.
 
 On any repo with a runnable UI, `tester` brings the app up
 (`python "{skill_dir}/scripts/with_server.py" --help`) and drives it through the
-**isolated in-app browser** — the `mcp__Claude_Browser__*` tools, which `ac-tester`
-and `ac-frontend` carry in their tool lists. *Never* the user's real or paired
+**isolated in-app browser** — the `mcp__Claude_Browser__*` tools, which `ayc-tester`
+and `ayc-frontend` carry in their tool lists. *Never* the user's real or paired
 Chrome (`mcp__claude-in-chrome__*`). Per primary screen:
 
 - **Both viewports** — render and screenshot at **desktop 1440×900** and **mobile
@@ -119,7 +123,7 @@ Chrome (`mcp__claude-in-chrome__*`). Per primary screen:
   4xx/5xx and never-resolving requests, and the **response bodies** (a `200`
   carrying `{"error": …}` is the failure a status check misses).
 - **Evidence or it didn't happen** — screenshots, console dumps and the
-  request/response log to `.ac-code-skill/log/<run-id>/screens/`; every claim cites
+  request/response log to `.ayc-skill/log/<run-id>/screens/`; every claim cites
   its artefact.
 
 No browser tools available in this host → say so, fall back to the project's own e2e
@@ -147,7 +151,7 @@ and a concrete fix on every line.
   A bug is rarely alone; see `report-format.md` §Variant analysis.
 - Run the merged report through
   `python "{skill_dir}/scripts/redact.py" --in report.md --strict` and save it to
-  `.ac-code-skill/log/<run-id>/report.md`; Step 4 delivers it to the user.
+  `.ayc-skill/log/<run-id>/report.md`; Step 4 delivers it to the user.
 - Optionally emit machine-readable findings for CI:
   `python "{skill_dir}/scripts/to_sarif.py" --in report.md --out findings.sarif`.
 - Consolidate Memory deltas into `memory.md` through the same privacy gate, and file
@@ -165,7 +169,7 @@ omit the section — there the user wants defects only, not a roadmap.
 
 ## Step 4 — Deliver the report
 
-**Both places, in full.** Saved at `.ac-code-skill/log/<run-id>/report.md` **and**
+**Both places, in full.** Saved at `.ayc-skill/log/<run-id>/report.md` **and**
 rendered whole into the chat — not a summary behind a file link. For a large
 report, lead the chat copy with the verdict and severity counts so the top stays
 skimmable, then the full grouped findings below.
@@ -287,10 +291,10 @@ Record the answers in memory's *Requirements & product*. Then:
 
 1. Propose a concrete stack + scaffold plan and confirm it. On an **aesthetic**
    brief ("premium minimal", "editorial", "make it feel expensive"), `frontend` runs
-   `python "{skill_dir}/scripts/design_system.py" "<brief>" --persist -o .ac-code-skill`
+   `python "{skill_dir}/scripts/design_system.py" "<brief>" --persist -o .ayc-skill`
    to compose a verified design system — pattern, style, colour tokens with
    **measured** WCAG ratios, typography with the correct import, anti-patterns,
-   checklist — into `.ac-code-skill/design-system/MASTER.md`, with `--page <name>`
+   checklist — into `.ayc-skill/design-system/MASTER.md`, with `--page <name>`
    overrides inheriting from it. Then apply `references/design-inspiration.md` for
    taste calibration, implemented originally in the project's own tokens and stack
    (learn principles, never clone). Record the direction in memory.

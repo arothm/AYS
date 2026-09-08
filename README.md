@@ -1,4 +1,4 @@
-# ac-code-skill
+# ayc-skill
 
 **Six principal-level engineering agents for your codebase — that verify their own claims.**
 
@@ -15,16 +15,16 @@ security scanning use MCP connectors or tools you already have, with graceful fa
 
 ```bash
 # Claude Code
-/plugin marketplace add arothm/AC-Code-Skill
-/plugin install ac-code-skill@ccskill
+/plugin marketplace add arothm/AYC-Skill
+/plugin install ayc-skill@ccskill
 ```
 
 For Claude Desktop / Cowork, download the bundle and upload it under
 **Settings → Capabilities → Skills**:
 
-[![Download the .skill](https://img.shields.io/badge/⬇_download-ac--code--skill.skill-2563EB?style=for-the-badge)](https://github.com/arothm/AC-Code-Skill/raw/main/ac-code-skill.skill)
+[![Download the .skill](https://img.shields.io/badge/⬇_download-ayc--skill.skill-2563EB?style=for-the-badge)](https://github.com/arothm/AYC-Skill/raw/main/ayc-skill.skill)
 
-> "Use ac-code-skill on this repo. Run the full review in parallel and give me one
+> "Use ayc-skill on this repo. Run the full review in parallel and give me one
 > prioritized report. Don't change anything yet."
 
 ---
@@ -36,9 +36,9 @@ name it. It also responds to explicit invocation. Three ways in:
 
 **1. Explicit — the surest trigger**
 ```
-run ac-code-skill                      → the full pipeline, end to end
-use ac-code-skill on this repo
-ac-code-skill record "<what happened>" → log out-of-band work into memory (runs no agents)
+run ayc-skill                      → the full pipeline, end to end
+use ayc-skill on this repo
+ayc-skill record "<what happened>" → log out-of-band work into memory (runs no agents)
 ```
 Four modes, picked before any agent is launched — see *Four ways to use it* below.
 
@@ -57,14 +57,14 @@ Four modes, picked before any agent is launched — see *Four ways to use it* be
 
 **3. Scope it in the same breath** (optional but recommended)
 ```
-"run ac-code-skill on the working diff, don't change anything, one prioritized report"
+"run ayc-skill on the working diff, don't change anything, one prioritized report"
 "review only the changed files and apply the safe fixes"
-"run ac-code-skill and deploy if it's green"
+"run ayc-skill and deploy if it's green"
 ```
 
 **What activation depends on:** the skill triggers on *codebase / multi-agent / quality*
 intent. A vague "help me with my code" may not auto-trigger — if it doesn't fire, just say
-**`run ac-code-skill`**. On the **first run** it asks two one-time questions up front
+**`run ayc-skill`**. On the **first run** it asks two one-time questions up front
 (private or commercial? should it own DevOps?) and remembers the answers.
 
 ---
@@ -90,10 +90,10 @@ Not sure who owns something? `python scripts/standards.py --who "rate limiting o
 
 | You say | What happens |
 |---|---|
-| `run ac-code-skill` | the full review pipeline below |
+| `run ayc-skill` | the full review pipeline below |
 | *"I have issues in 1, 2, 3 and I want features A, B, C"* | **build mode** — your list becomes numbered work items with owners and acceptance criteria, unknowns asked in one batch, then built one at a time and verified per item |
 | *"where is auth handled?"* / *"is this endpoint rate limited?"* | **ask mode** — answered from shared memory, then the code; at most one agent, never the fan-out |
-| `ac-code-skill record <what happened>` | captures out-of-band work into memory; runs no agents |
+| `ayc-skill record <what happened>` | captures out-of-band work into memory; runs no agents |
 
 ## How a run works
 
@@ -118,11 +118,11 @@ unverified fix, and nothing is called shipped until it's been re-reviewed live.
 
 | Mode | Trigger | What happens |
 |---|---|---|
-| **Full run** | `run ac-code-skill` | the whole pipeline, stopping only at approval gates |
+| **Full run** | `run ayc-skill` | the whole pipeline, stopping only at approval gates |
 | **Targeted** | "audit security", "check my tests" | only the matching agents |
 | **Greenfield** | empty repo | per-role intake interview → docs → scaffold |
 | **First-run setup** | first run on a repo | asks *once*, then remembers: private or commercial? should the fleet own DevOps? (which docs you want is asked in phase 4, once the review knows what the project is) |
-| **Record** | `ac-code-skill record "<what happened>"` | captures out-of-band work (a hand fix, a deploy, an incident) into memory. A skill is instructions for a turn, not a daemon — this is how work done outside a run still reaches the next one |
+| **Record** | `ayc-skill record "<what happened>"` | captures out-of-band work (a hand fix, a deploy, an incident) into memory. A skill is instructions for a turn, not a daemon — this is how work done outside a run still reaches the next one |
 | **Continuous** | optional hooks | prime memory at session start, refuse a commit carrying a secret, typecheck on edit |
 
 ## What makes it different
@@ -139,7 +139,7 @@ unverified fix, and nothing is called shipped until it's been re-reviewed live.
   gets a privacy policy — and this **private-vs-commercial choice is asked once, not
   guessed**.
 - **The report lands in two places** — the full report is rendered in the chat *and*
-  saved as `.ac-code-skill/log/<run-id>/report.md`, not buried behind a file link.
+  saved as `.ayc-skill/log/<run-id>/report.md`, not buried behind a file link.
   `to_sarif.py` additionally emits SARIF 2.1.0, so findings can gate CI or land in
   GitHub code scanning instead of only being read.
 - **The agent that finds it, fixes it.** It already holds the file, the repro and the
@@ -259,7 +259,7 @@ Standard-library Python, offline, black-box (`--help`, then invoke).
 ```bash
 # Design system from a brief, with a self-validating dataset
 python scripts/design_system.py "premium minimal SaaS landing page" --stack react
-python scripts/design_system.py "<brief>" --persist -o .ac-code-skill  # MASTER.md + page overrides
+python scripts/design_system.py "<brief>" --persist -o .ayc-skill  # MASTER.md + page overrides
 python scripts/design_system.py --validate                 # 295 checks, non-zero exit on failure
 python scripts/design_system.py --validate --check-fonts   # 307 — also probes the live providers
 
@@ -267,10 +267,10 @@ python scripts/design_system.py --validate --check-fonts   # 307 — also probes
 python scripts/standards.py --agent frontend --context web,commercial --checklist
 python scripts/standards.py --who "TLS and HTTP/3 at the edge"
 python scripts/standards.py --libraries        # vetted component libraries + licences
-python scripts/standards.py --validate         # 114 checks
+python scripts/standards.py --validate         # 117 checks
 
 # Retrieve only the relevant slice of memory/docs
-python scripts/recall.py "budget race condition" --root .ac-code-skill --role backend
+python scripts/recall.py "budget race condition" --root .ayc-skill --role backend
 
 # PII gate — run before anything is persisted
 python scripts/redact.py --in report.md --strict
@@ -296,11 +296,11 @@ python scripts/run_scanners.py --help
 ```
 agents/                         # 6 Claude Code agent definitions — Opus at low effort,
 │                               #   capped output contracts, in-app browser for UI work
-├── ac-frontend · ac-backend · ac-security · ac-tester · ac-ai-engineer
-└── ac-devops
+├── ayc-frontend · ayc-backend · ayc-security · ayc-tester · ayc-ai-engineer
+└── ayc-devops
 hooks/hooks.json.example        # optional continuous mode — .example on purpose
 tests/test_scripts.py           # 54 stdlib unittest cases over the helpers
-skills/ac-code-skill/
+skills/ayc-skill/
 ├── SKILL.md                    # the coordinator: modes, roster, gates, reference map
 ├── references/                 # 12 briefs, loaded on demand
 │   ├── pipeline.md             #   the Step 0–6 operating manual (review runs)
@@ -328,7 +328,7 @@ skills/ac-code-skill/
 call them through the resolved skill directory (`${CLAUDE_SKILL_DIR}`) rather than a
 bare relative path — the working directory during a run is your project.
 
-Runtime output lands in `.ac-code-skill/` in the target repo (git-ignored): `memory.md`,
+Runtime output lands in `.ayc-skill/` in the target repo (git-ignored): `memory.md`,
 `design-system/MASTER.md` + `pages/`, and `log/<run-id>/` holding each
 agent's raw report, captured evidence, and the merged report.
 
@@ -340,11 +340,11 @@ new version.
 
 ```
 /plugin marketplace update ccskill        # refresh the catalog from GitHub
-/plugin update ac-code-skill@ccskill      # update the installed plugin
+/plugin update ayc-skill@ccskill      # update the installed plugin
 /reload-plugins                           # apply without restarting
 ```
 
-Or from the CLI: `claude plugin update ac-code-skill@ccskill`, and `claude plugin list`
+Or from the CLI: `claude plugin update ayc-skill@ccskill`, and `claude plugin list`
 to confirm what's installed.
 
 **Auto-update is off by default for third-party marketplaces** (including this one).
@@ -353,25 +353,25 @@ Note that a running session keeps the versions it launched with: `SKILL.md` edit
 immediately, but other components need `/reload-plugins` or a restart.
 
 > **Developing the skill?** Skip the marketplace round-trip — copy or symlink
-> `skills/ac-code-skill` into `~/.claude/skills/` and your edits are live immediately.
+> `skills/ayc-skill` into `~/.claude/skills/` and your edits are live immediately.
 
 ## Install (other targets)
 
 **Skills folder**
 ```bash
-git clone https://github.com/arothm/AC-Code-Skill.git
-cp -r AC-Code-Skill/skills/ac-code-skill ~/.claude/skills/ac-code-skill
+git clone https://github.com/arothm/AYC-Skill.git
+cp -r AYC-Skill/skills/ayc-skill ~/.claude/skills/ayc-skill
 ```
 
 **Claude Desktop / Cowork** — download the prebuilt bundle and upload it under
 **Settings → Capabilities → Skills**:
 
-[![Download the .skill](https://img.shields.io/badge/⬇_download-ac--code--skill.skill-2563EB?style=for-the-badge)](https://github.com/arothm/AC-Code-Skill/raw/main/ac-code-skill.skill)
+[![Download the .skill](https://img.shields.io/badge/⬇_download-ayc--skill.skill-2563EB?style=for-the-badge)](https://github.com/arothm/AYC-Skill/raw/main/ayc-skill.skill)
 
 Rebuild it after editing the skill with the bundled build script (forward-slash
 paths, no bytecode — validates for desktop upload):
 ```bash
-python build.py            # writes ac-code-skill.skill
+python build.py            # writes ayc-skill.skill
 python build.py --check    # verify an existing bundle
 ```
 

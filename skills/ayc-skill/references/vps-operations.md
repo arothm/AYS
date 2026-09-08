@@ -43,7 +43,7 @@ Server ownership is opt-in and asked **once**. If memory has no server and no
   (`redact.py`) before any of this reaches memory or a report — record *where* a
   credential lives, never its value.
 - **Capture evidence.** Save raw command output to
-  `.ac-code-skill/log/<run-id>/server/`. A server claim with no captured output is
+  `.ayc-skill/log/<run-id>/server/`. A server claim with no captured output is
   an assertion, and rule 1 forbids those.
 - **State the host and environment out loud** before acting. "Running on
   prod-web-01 as root" — the failure mode where someone operates on the wrong box

@@ -36,7 +36,7 @@ The skill installs nothing. Two consequences:
 - **Browser control** (rendering, clicking, screenshots, console logs) is done
   through a **Playwright/browser MCP if one is connected** — not a bundled
   Playwright install. Check for an available browser/Playwright MCP first.
-  - **`ac-tester` and `ac-frontend` ship with the in-app browser tools
+  - **`ayc-tester` and `ayc-frontend` ship with the in-app browser tools
     (`mcp__Claude_Browser__*`) in their own tool lists** — that is the isolated
     browser, already available, and no MCP setup is needed to use it.
   - **Browser preference (important — respect the user's isolation choice).**
@@ -154,10 +154,10 @@ verified. A UI fix confirmed only by a green unit test has not been confirmed.
 everything visual or flow-based **"unverified (no browser)"**. Never describe a
 screen you did not render or a click you did not perform.
 
-## Policy 4 — Capture evidence to `.ac-code-skill/log/<run-id>/`
+## Policy 4 — Capture evidence to `.ayc-skill/log/<run-id>/`
 
 "Never assume" means your claims should be backed by artifacts the user can
-open. For each run, save into `.ac-code-skill/log/<run-id>/` (git-ignored):
+open. For each run, save into `.ayc-skill/log/<run-id>/` (git-ignored):
 
 - **Screenshots** at the relevant states (and, for the designer, one per
   breakpoint).
@@ -165,7 +165,7 @@ open. For each run, save into `.ac-code-skill/log/<run-id>/` (git-ignored):
 - **Scanner output** (from `{skill_dir}/scripts/run_scanners.py`) for the security agent.
 
 Reference the artifact path in the finding, e.g. `Fix: … (see
-.ac-code-skill/log/<run-id>/checkout-500.png)`. A finding with an artifact is verified;
+.ayc-skill/log/<run-id>/checkout-500.png)`. A finding with an artifact is verified;
 one without is, at best, "likely."
 
 ## Policy 5 — Cache harness facts in memory

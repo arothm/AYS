@@ -12,13 +12,21 @@ OOXML each time.
 
 USAGE
     python md_to_docx.py --in FILE.md --out FILE.docx
-    python md_to_docx.py --in-dir docs_src --out-dir .ac-code-skill/docs   # batch: every *.md -> *.docx
+    python md_to_docx.py --in-dir docs_src --out-dir .ayc-skill/docs   # batch: every *.md -> *.docx
     python md_to_docx.py --in FILE.md --out FILE.docx --no-pandoc          # force the built-in writer
 
 Exit 0 on success; prints one line per file written.
 """
 from __future__ import annotations
 import argparse, html, os, re, shutil, subprocess, sys, zipfile
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    # Windows consoles default to cp1252 and would mangle the em dashes and arrows
+    # this prints. Matches the guard the other helpers already carry.
+except Exception:
+    pass
 
 # ---------------------------------------------------------------- inline runs
 _CODE = re.compile(r"`([^`]+)`")

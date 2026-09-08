@@ -19,7 +19,7 @@ substituted inside `settings.json`.
 
 ## The three that earn their keep
 
-Set `SKILL` to wherever the skill lives (e.g. `~/.claude/skills/ac-code-skill`).
+Set `SKILL` to wherever the skill lives (e.g. `~/.claude/skills/ayc-skill`).
 
 ```jsonc
 {
@@ -30,7 +30,7 @@ Set `SKILL` to wherever the skill lives (e.g. `~/.claude/skills/ac-code-skill`).
         "hooks": [
           {
             "type": "command",
-            "command": "python \"$SKILL/scripts/recall.py\" \"session start: current branch work\" --root .ac-code-skill --top 4 || true",
+            "command": "python \"$SKILL/scripts/recall.py\" \"session start: current branch work\" --root .ayc-skill --top 4 || true",
             "timeout": 15
           }
         ]
@@ -79,7 +79,7 @@ happen *after* a run never reach memory. This nudges you to capture them:
     "hooks": [
       {
         "type": "command",
-        "command": "test -d .ac-code-skill && echo 'If anything changed outside a run (fix, deploy, incident, decision), capture it: ac-code-skill record \"<what happened>\"' || true",
+        "command": "test -d .ayc-skill && echo 'If anything changed outside a run (fix, deploy, incident, decision), capture it: ayc-skill record \"<what happened>\"' || true",
         "timeout": 5
       }
     ]
@@ -106,7 +106,7 @@ happen *after* a run never reach memory. This nudges you to capture them:
 - **Never silently mutate.** A hook that rewrites files under the user is
   indistinguishable from a bug. Check and report; leave the fix to the fix phase.
 - **Assume it runs without a repo.** Guard with `--if-present`, `|| true`, and
-  tolerate a missing `.ac-code-skill/` — a hook that errors on a fresh clone
+  tolerate a missing `.ayc-skill/` — a hook that errors on a fresh clone
   trains people to delete hooks.
 - **Cost is real.** Every hook runs on every matching event forever. Add one only
   if you can say what it saves.

@@ -15,10 +15,10 @@ Reads `.md` and the generated `.docx` (text is extracted from the OOXML, stdlib
 only), so Word docs stay searchable.
 
 USAGE
-    python recall.py "budget race condition" --root .ac-code-skill
+    python recall.py "budget race condition" --root .ayc-skill
     python recall.py "responsive breakpoints" --role frontend --top 6
-    python recall.py "deploy rollback" --root .ac-code-skill --format json
-    python recall.py --list --root .ac-code-skill        # section inventory only
+    python recall.py "deploy rollback" --root .ayc-skill --format json
+    python recall.py --list --root .ayc-skill        # section inventory only
 """
 from __future__ import annotations
 import argparse, json, math, os, re, sys, xml.etree.ElementTree as ET, zipfile
@@ -158,7 +158,7 @@ def render(chosen, omitted, total, query, role):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Retrieve relevant memory/doc sections instead of loading everything.")
     ap.add_argument("query", nargs="?", help="what this agent is about to work on")
-    ap.add_argument("--root", default=".ac-code-skill", help="the .ac-code-skill directory (default: .ac-code-skill)")
+    ap.add_argument("--root", default=".ayc-skill", help="the .ayc-skill directory (default: .ayc-skill)")
     ap.add_argument("--top", type=int, default=6, help="max non-pinned sections to return (default: 6)")
     ap.add_argument("--role", help="agent role; pins that role's Agent learnings")
     ap.add_argument("--format", choices=["md", "json"], default="md")

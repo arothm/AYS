@@ -8,12 +8,12 @@ not once per agent per run).
 
 ## Location and layout
 
-Everything lives in a `.ac-code-skill/` directory at the project root,
-**git-ignored** (the coordinator adds `.ac-code-skill/` to `.gitignore` on first
+Everything lives in a `.ayc-skill/` directory at the project root,
+**git-ignored** (the coordinator adds `.ayc-skill/` to `.gitignore` on first
 run if it isn't there).
 
 ```
-.ac-code-skill/
+.ayc-skill/
 ├── memory.md            # the consolidated, always-current project knowledge base
 ├── design-system/       # generated design system (only when UI work happens)
 │   ├── MASTER.md        #   global design rules: tokens, type, pattern, anti-patterns
@@ -35,10 +35,13 @@ run if it isn't there).
 review→fix→deploy cycle. Don't keep calling a run `reviewN` after it grew into a
 fix/deploy cycle; the id should match the work.
 
-**Migrating an older workspace.** If a pre-rename `.fleet/` directory exists,
-migrate its `memory.md` into `.ac-code-skill/` on first run and **remove the old
-`.fleet/`** — leaving both behind means two memories drift apart and agents can
-read the stale one.
+**Migrating an older workspace.** If a pre-rename `.fleet/` or `.ac-code-skill/`
+directory exists, migrate its `memory.md` — and its `design-system/` — into
+`.ayc-skill/` on first run and **remove the old directory**. Leaving both behind
+means two memories drift apart and agents can read the stale one. Check both old
+names: this workspace has been renamed twice (`.fleet/` → `.ac-code-skill/` →
+`.ayc-skill/`), and a repo last run under either one still has its history there.
+Add the new name to `.gitignore` and drop the old entry in the same pass.
 
 ## The single-writer rule (why agents don't write memory directly)
 
@@ -128,7 +131,7 @@ The coordinator seeds this on first run and grows it over time. Keep sections;
 keep entries terse.
 
 ```markdown
-# AC Code Skill Memory — <project name>
+# AYC Skill Memory — <project name>
 _Last updated: <date> by coordinator (run <run-id>)_
 
 ## Project overview

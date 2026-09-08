@@ -17,7 +17,7 @@ built that wasn't agreed, and nothing is claimed done that wasn't verified.
 
 ## Step B0 — Memory and detection, same as always
 
-Load `.ac-code-skill/memory.md` (Step 0) and detect stack, real commands and
+Load `.ayc-skill/memory.md` (Step 0) and detect stack, real commands and
 scope (Step 1) if memory doesn't already hold them verified. Check the **Findings
 & fix ledger** before anything else: an issue the user just reported may already
 be `[open]` there with an agent's diagnosis attached, or `[wontfix]` with a reason
@@ -119,7 +119,7 @@ verification evidence, and the diff summary. Then, across the whole set:
 - **What you noticed but didn't touch** — the drive-by findings from step B2.2,
   offered as a follow-up list, never applied unasked.
 - **Suggested next step** — usually the review pipeline over the diff you just
-  created (`run ac-code-skill` scoped to the working diff), which is the honest
+  created (`run ayc-skill` scoped to the working diff), which is the honest
   way to catch what the building agents were too close to see.
 
 Consolidate into memory: each item into the **Findings & fix ledger** (`[fixed]`

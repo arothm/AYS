@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Build ac-code-skill.skill deterministically and correctly.
+"""Build ayc-skill.skill deterministically and correctly.
 
-The .skill file is a zip of skills/ac-code-skill/. Building it by hand (or with
+The .skill file is a zip of skills/ayc-skill/. Building it by hand (or with
 PowerShell Compress-Archive on Windows) produced two validator failures: Windows
 BACKSLASH path separators in the archive, and shipped __pycache__/*.pyc. This
 builds it right — forward-slash arcnames, junk excluded — so desktop/Cowork
 uploads validate without repackaging.
 
-Deliberately bundles ONLY skills/ac-code-skill/. The plugin's `agents/` and
+Deliberately bundles ONLY skills/ayc-skill/. The plugin's `agents/` and
 `hooks/` directories are Claude Code plugin components with no meaning in a
 .skill upload, and `tests/` is developer-only.
 
@@ -17,15 +17,23 @@ Code only `name`, `description`, `allowed-tools`, `license`, `metadata` and
 `compatibility` are permitted, and any other key is a hard upload error rather
 than an ignored field.
 
-    python build.py            # writes ac-code-skill.skill
+    python build.py            # writes ayc-skill.skill
     python build.py --check    # verify an existing bundle, don't rebuild
 """
 from __future__ import annotations
 import os, sys, zipfile
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    # Windows consoles default to cp1252 and would mangle the em dashes and arrows
+    # this prints. Matches the guard the other helpers already carry.
+except Exception:
+    pass
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(ROOT, "skills", "ac-code-skill")
-OUT = os.path.join(ROOT, "ac-code-skill.skill")
+SRC = os.path.join(ROOT, "skills", "ayc-skill")
+OUT = os.path.join(ROOT, "ayc-skill.skill")
 EXCLUDE_DIRS = {"__pycache__", ".git", ".pytest_cache", ".mypy_cache", "node_modules"}
 EXCLUDE_EXT = {".pyc", ".pyo", ".pyd"}
 EXCLUDE_NAMES = {".DS_Store", "Thumbs.db"}
