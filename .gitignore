@@ -6,3 +6,6 @@ __pycache__/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Session records — personal transcripts, not skill content
+*-Session-Record.md
