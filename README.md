@@ -262,6 +262,9 @@ python scripts/design_system.py "premium minimal SaaS landing page" --stack reac
 python scripts/design_system.py "<brief>" --persist -o .ayc-skill  # MASTER.md + page overrides
 python scripts/design_system.py --validate                 # 295 checks, non-zero exit on failure
 python scripts/design_system.py --validate --check-fonts   # 307 — also probes the live providers
+                                                           #   (a provider that serves only some of
+                                                           #   a pairing's families fails here, so a
+                                                           #   font can't silently fall back)
 
 # Standards: query them, or route a need to its owning agent
 python scripts/standards.py --agent frontend --context web,commercial --checklist
@@ -286,7 +289,9 @@ ssh host 'bash -s' < audit.sh > captured.txt
 python scripts/server_audit.py --parse captured.txt
 
 # Testing and security helpers the agents drive (md_to_docx.py is still bundled
-# for one-off Markdown → Word conversion, though no phase runs it automatically)
+# for one-off Markdown → Word conversion, though no phase runs it automatically).
+# with_server.py kills the whole process tree and then probes the port, so it
+# can't report "stopped" while a server is still holding it.
 python scripts/with_server.py --help
 python scripts/run_scanners.py --help
 ```
@@ -299,7 +304,7 @@ agents/                         # 6 Claude Code agent definitions — Opus at lo
 ├── ayc-frontend · ayc-backend · ayc-security · ayc-tester · ayc-ai-engineer
 └── ayc-devops
 hooks/hooks.json.example        # optional continuous mode — .example on purpose
-tests/test_scripts.py           # 54 stdlib unittest cases over the helpers
+tests/test_scripts.py           # 62 stdlib unittest cases over the helpers
 skills/ayc-skill/
 ├── SKILL.md                    # the coordinator: modes, roster, gates, reference map
 ├── references/                 # 12 briefs, loaded on demand
@@ -379,16 +384,24 @@ python build.py --check    # verify an existing bundle
 
 Stated plainly, because the skill itself forbids overclaiming:
 
-- **The helpers are unit-tested, not integration-tested together.** `tests/test_scripts.py`
-  runs 54 stdlib unittest cases over all nine helpers — WCAG contrast against known ratios,
-  the redactor's BLOCK/HASH/PASS behaviour and its Luhn and dotted-quad guards, every
-  emitted server-audit command proven read-only in command position, `.docx` validity and
-  XML escaping, recall's pinning and its "nothing silently dropped" promise, and the SARIF
-  parser. But a full pipeline run with *all* of it wired together hasn't happened yet.
+- **The helpers are unit-tested and individually exercised, but the pipeline has never run
+  end to end.** `tests/test_scripts.py` runs 62 stdlib unittest cases over all nine helpers
+  — WCAG contrast against known ratios, the redactor's BLOCK/HASH/PASS behaviour and its
+  Luhn and dotted-quad guards, every emitted server-audit command proven read-only in
+  command position, `.docx` validity and XML escaping, recall's pinning and its "nothing
+  silently dropped" promise, the SARIF parser, process-tree teardown, and that every font
+  family a pairing declares is actually loaded by one of its import URLs. Each script has
+  also been driven by hand through its real flags. But a full run with the agents, the
+  memory and the gates wired together hasn't happened yet.
 
   ```bash
   python -m unittest discover -s tests -v
   ```
+
+  Running them by hand is what found the two defects the unit tests could not: a server
+  teardown that killed the shell rather than the process tree, and a font pairing whose
+  provider silently served only the first of two families. Both are fixed and both now have
+  regression tests. Assume the same is true of whatever hasn't been run yet.
 - **The design dataset is curated, not exhaustive** (13 styles / 14 palettes / 20 product
   types). Breadth was traded for correctness; the generator reports its own match confidence
   so a weak match is visible rather than silent.
