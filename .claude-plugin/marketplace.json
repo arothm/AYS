@@ -9,20 +9,20 @@
   },
   "plugins": [
     {
-      "name": "ayc-skill",
-      "description": "Orchestrate a fleet of six principal-level subagents (Frontend, Backend, Cyber Security, end-to-end Tester, DevOps, and an AI Agent Engineer for AI/LLM repos) over a codebase, coordinated through one shared memory. Agents review read-only in parallel, check for outdated/dead dependencies and dead code, self-improve, and each applies its own approved fixes sequentially in the gated fix phase. Fixes are approval-gated; deploys auto-run with rollback. 'run ayc-skill' runs the whole pipeline in one prompt, and an empty repo triggers a from-scratch interview.",
+      "name": "ays",
+      "description": "Orchestrate a fleet of six principal-level subagents (Frontend, Backend, Cyber Security, end-to-end Tester, DevOps, and an AI Agent Engineer for AI/LLM repos) over a codebase, coordinated through one shared memory. Agents review read-only in parallel, check for outdated/dead dependencies and dead code, self-improve, and each applies its own approved fixes sequentially in the gated fix phase. Fixes are approval-gated; deploys auto-run with rollback. 'run ays' runs the whole pipeline in one prompt, and an empty repo triggers a from-scratch interview.",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/ayc-skill"
+        "./skills/ays"
       ],
       "agents": [
-        "./agents/ayc-frontend.md",
-        "./agents/ayc-backend.md",
-        "./agents/ayc-security.md",
-        "./agents/ayc-tester.md",
-        "./agents/ayc-ai-engineer.md",
-        "./agents/ayc-devops.md"
+        "./agents/ays-frontend.md",
+        "./agents/ays-backend.md",
+        "./agents/ays-security.md",
+        "./agents/ays-tester.md",
+        "./agents/ays-ai-engineer.md",
+        "./agents/ays-devops.md"
       ]
     }
   ]

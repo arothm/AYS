@@ -71,13 +71,13 @@ is how each agent feeds the shared memory without writing it directly; the
 **Improvements** block feeds the self-improvement store. The coordinator collects
 all of these, folds enhancements into the report's *Recommendations* section (and
 the memory enhancement backlog), and consolidates deltas + improvements into
-`.ayc-skill/memory.md` (single writer — see `memory.md`). Keep them durable
+`.ays/memory.md` (single writer — see `memory.md`). Keep them durable
 and terse; per-run findings belong in the report, not in memory.
 
 ## The merged report (you write this)
 
 **Deliver the report in two places, both times.** Save the full report to
-`.ayc-skill/log/<run-id>/report.md` **and** render the full report into the
+`.ays/log/<run-id>/report.md` **and** render the full report into the
 chat — not just a summary. The file is the durable artefact; the chat copy is what
 the user actually reads, and burying it behind a "see the file" link is a worse
 experience. (For a very large report, lead the chat copy with the verdict + counts
@@ -85,7 +85,7 @@ so the top is skimmable, then the full grouped findings below.) Use this templat
 for both: 
 
 ```markdown
-# AYC Skill — Review Report
+# AYS — Review Report
 
 **Verdict:** <PASS / NEEDS WORK / BLOCKED>
 **Counts:** N blocking · M warnings · K nits
@@ -181,8 +181,8 @@ instead of skipping it silently.
 can be uploaded to GitHub code scanning or gate a CI job:
 
 ```bash
-python "{skill_dir}/scripts/to_sarif.py" --in .ayc-skill/log/<run-id>/report.md \
-    --out .ayc-skill/log/<run-id>/findings.sarif
+python "{skill_dir}/scripts/to_sarif.py" --in .ays/log/<run-id>/report.md \
+    --out .ays/log/<run-id>/findings.sarif
 python "{skill_dir}/scripts/to_sarif.py" --in report.md --out findings.sarif --fail-on blocking
 ```
 
@@ -195,7 +195,7 @@ replacement.
 ## The fix-verification report (Step 5, after the fixes land)
 
 Each agent re-reviews **its own** fixes and returns a verdict per finding; you merge
-them into one table, save it to `.ayc-skill/log/<run-id>/fix-verification.md`,
+them into one table, save it to `.ays/log/<run-id>/fix-verification.md`,
 and show it in chat. Deploy does not start with a `not fixed` or `regressed` row
 outstanding.
 
@@ -220,7 +220,7 @@ looks right" is not a verdict.
 ## The build-mode report (per work item)
 
 ```markdown
-# AYC Skill — Build report — run <run-id>
+# AYS — Build report — run <run-id>
 
 **Delivered:** <n> of <m> items · **blocked:** <n> · **regressions:** <n>
 

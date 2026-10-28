@@ -12,7 +12,7 @@ review and fix phases, and never concurrently with the read-only agents.
 
 ## Where deploy facts come from
 
-Read `.ayc-skill/memory.md` → "Infra & deploy" for the host, OS, deploy method,
+Read `.ays/memory.md` → "Infra & deploy" for the host, OS, deploy method,
 health-check URL, and rollback method. If those aren't recorded yet, discover
 them (deploy scripts, CI config, `Dockerfile`/compose, `Procfile`, systemd
 units, `fly.toml`/`vercel.json`/etc.) and write them back as a memory delta so

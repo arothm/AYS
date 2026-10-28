@@ -34,8 +34,8 @@ try:
 except Exception:
     pass
 
-TOOL = "ayc-skill"
-INFO_URI = "https://github.com/arothm/AYC-Skill"
+TOOL = "ays"
+INFO_URI = "https://github.com/arothm/AYS"
 
 LEVEL = {"blocking": "error", "warning": "warning", "nit": "note"}
 RANK = {"blocking": 3, "warning": 2, "nit": 1}
@@ -72,7 +72,7 @@ PATHISH = re.compile(r"^[\w.@/\\-]+$")
 def rule_id(sev, message):
     """Stable-ish rule id from the leading words of the message."""
     words = re.findall(r"[a-z0-9]+", message.lower())[:4]
-    return "ayc-%s-%s" % (sev.lower(), "-".join(words) or "finding")
+    return "ays-%s-%s" % (sev.lower(), "-".join(words) or "finding")
 
 
 def parse(text):
@@ -143,7 +143,7 @@ def to_sarif(findings):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Convert an ayc-skill report to SARIF 2.1.0.")
+    ap = argparse.ArgumentParser(description="Convert an ays report to SARIF 2.1.0.")
     ap.add_argument("--in", dest="inp", help="the merged report markdown (default: stdin)")
     ap.add_argument("--out", dest="out", help="output .sarif file (default: stdout)")
     ap.add_argument("--fail-on", choices=["blocking", "warning", "nit"],

@@ -118,8 +118,8 @@ concrete, self-verified spec in one command:
 
 ```bash
 python {skill_dir}/scripts/design_system.py "premium minimal SaaS landing page"
-python {skill_dir}/scripts/design_system.py "<brief>" --persist -o .ayc-skill   # design-system/MASTER.md
-python {skill_dir}/scripts/design_system.py "<brief>" --page checkout -o .ayc-skill
+python {skill_dir}/scripts/design_system.py "<brief>" --persist -o .ays   # design-system/MASTER.md
+python {skill_dir}/scripts/design_system.py "<brief>" --page checkout -o .ays
 python {skill_dir}/scripts/design_system.py --validate      # dataset gate; non-zero exit on failure (offline)
 python {skill_dir}/scripts/design_system.py --validate --check-fonts   # + probe providers for the families
 python {skill_dir}/scripts/design_system.py "<brief>" --stack react   # stack-aware motion-library pick

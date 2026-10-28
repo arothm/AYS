@@ -22,7 +22,7 @@ import zipfile
 from contextlib import redirect_stdout, redirect_stderr
 
 SKILL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     "skills", "ayc-skill")
+                     "skills", "ays")
 sys.path.insert(0, os.path.join(SKILL, "scripts"))
 
 import design_system  # noqa: E402
@@ -414,7 +414,7 @@ class TestRunScanners(unittest.TestCase):
 
 
 # -------------------------------------------------------------------- to_sarif
-REPORT = """# AYC Skill - Review Report
+REPORT = """# AYS - Review Report
 
 **Verdict:** NEEDS WORK
 
@@ -448,7 +448,7 @@ class TestToSarif(unittest.TestCase):
         doc = to_sarif.to_sarif(to_sarif.parse(REPORT))
         self.assertEqual(doc["version"], "2.1.0")
         run_ = doc["runs"][0]
-        self.assertEqual(run_["tool"]["driver"]["name"], "ayc-skill")
+        self.assertEqual(run_["tool"]["driver"]["name"], "ays")
         self.assertEqual(len(run_["results"]), 3)
         levels = sorted(r["level"] for r in run_["results"])
         self.assertEqual(levels, ["error", "note", "warning"])

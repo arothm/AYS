@@ -12,7 +12,7 @@ OOXML each time.
 
 USAGE
     python md_to_docx.py --in FILE.md --out FILE.docx
-    python md_to_docx.py --in-dir docs_src --out-dir .ayc-skill/docs   # batch: every *.md -> *.docx
+    python md_to_docx.py --in-dir docs_src --out-dir .ays/docs   # batch: every *.md -> *.docx
     python md_to_docx.py --in FILE.md --out FILE.docx --no-pandoc          # force the built-in writer
 
 Exit 0 on success; prints one line per file written.

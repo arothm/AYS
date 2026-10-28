@@ -1,5 +1,5 @@
 ---
-name: ayc-skill
+name: ays
 description: >-
   A fleet of six principal-level engineering subagents — Frontend, Backend,
   Cyber Security, end-to-end Tester, DevOps, and an AI Agent Engineer — that
@@ -9,9 +9,9 @@ description: >-
   when they bring a work list ("I have these bugs and I want these features"),
   which runs build mode instead of the review pipeline. Covers a whole repo, a
   working diff, a pre-PR/pre-merge/release sweep, or an empty repo they want built
-  from scratch. Also use for "run ayc-skill", "use the fleet", "audit my VPS",
+  from scratch. Also use for "run ays", "use the fleet", "audit my VPS",
   "generate a design system", a question about the codebase the fleet already
-  knows, and "ayc-skill record <what happened>". Read this skill's body and its pipeline reference before
+  knows, and "ays record <what happened>". Read this skill's body and its pipeline reference before
   acting: the phase order, the read-only boundaries, the approval gates and the
   verification passes are defined there, not in this description.
 license: MIT
@@ -29,7 +29,7 @@ metadata:
   helper-scripts: 9
 ---
 
-# AYC Skill
+# AYS
 
 This skill turns a broad "test, clean up, and ship my code" request into a fleet
 of focused subagents that each own one narrow job, coordinated through one shared
@@ -63,12 +63,12 @@ with a real absolute path when this file loads.
 
 | The user… | Mode | Costs |
 |---|---|---|
-| says **`run ayc-skill`** / "review everything" | **full pipeline** (see *One-prompt full run*) | a full run |
+| says **`run ays`** / "review everything" | **full pipeline** (see *One-prompt full run*) | a full run |
 | makes a **specific ask** ("check my tests", "audit security") | pipeline, **only the matching agents** | one or two agents |
 | brings a **work list** ("I have issues in 1,2,3 and want features A,B,C") | **build mode** → `references/build-mode.md` | one agent per item |
 | **asks a question** ("where is auth handled?", "is this endpoint rate limited?") | **ask mode** (below) | memory, or one agent |
 | has an **empty repo** + intent to start | **greenfield**: interview, then scaffold | interview first |
-| says **`ayc-skill record <what happened>`** | capture into memory, **no agents** | nothing |
+| says **`ays record <what happened>`** | capture into memory, **no agents** | nothing |
 
 Choosing wrong is expensive in one direction only: running the pipeline for a
 question burns a full review's tokens to produce a sentence. When the mode is
@@ -80,7 +80,7 @@ open a negotiation about it.
 A question is not a run. **Answer it and stop.**
 
 1. **Memory first.** `python "${CLAUDE_SKILL_DIR}/scripts/recall.py" "<the
-   question>" --root .ayc-skill` — the stack, commands, conventions, prior
+   question>" --root .ays` — the stack, commands, conventions, prior
    findings and the fix ledger are already there, established by earlier runs.
    If it answers the question, you are done.
 2. **Then the code, directly.** Grep and read the relevant lines yourself. Most
@@ -134,8 +134,8 @@ fixes ADR-style with the trade-off spelled out. Full briefs:
 | `ai-engineer` | AI/LLM features: prompts, agents/RAG, model choice, evals, cost, guardrails (only when the repo has AI) | yes | yes (per-item confirmed) |
 | `devops` | Deploy + rollback, CI/CD, dep upgrades, VPS audit and operation | pipeline/IaC | deploy phase |
 
-**In Claude Code these ship as real agent definitions** (`ayc-frontend`,
-`ayc-backend`, `ayc-security`, `ayc-tester`, `ayc-ai-engineer`, `ayc-devops`) — prefer
+**In Claude Code these ship as real agent definitions** (`ays-frontend`,
+`ays-backend`, `ays-security`, `ays-tester`, `ays-ai-engineer`, `ays-devops`) — prefer
 them over a general-purpose subagent type. On a host without them, dispatch a
 general-purpose subagent and state the phase rules in the prompt.
 
@@ -180,7 +180,7 @@ gates, the boundaries and the verification passes that make the pipeline safe.
 
 | # | Phase | In one line |
 |---|---|---|
-| 0 | Memory | Load or bootstrap `.ayc-skill/`; it is the briefing every agent inherits |
+| 0 | Memory | Load or bootstrap `.ays/`; it is the briefing every agent inherits |
 | 1 | Detect | Stack, real commands, deps, AI signals, scope — or greenfield if the repo is empty |
 | 2 | Select | Only the agents this repo and this request need; confirm with the user |
 | 3 | Review | Read-only agents in parallel, each on the surface it owns; `tester` exercises the running app in a browser; merge into one report |
@@ -231,7 +231,7 @@ finishing the list does not authorize shipping it.
 finishes nothing keeps running, so fixes, deploys, incidents and decisions made
 outside a run are invisible — and the *next* run starts blind to them.
 
-**`ayc-skill record <what happened>`** closes that gap. It runs no agents: it
+**`ays record <what happened>`** closes that gap. It runs no agents: it
 takes what just happened, verifies it against the current source, passes it
 through `redact.py --strict`, and consolidates it into `memory.md` under the right
 section, superseding anything it contradicts.
@@ -251,13 +251,13 @@ auto-active.
 
 ## One-prompt full run
 
-On **`run ayc-skill`**, execute the pipeline end to end without stopping to
+On **`run ays`**, execute the pipeline end to end without stopping to
 design it: memory → detect → auto-select every agent the stack supports → full
 parallel review with `tester` exercising the app live → consolidate → one
 prioritized report.
 
 Then **stop at the gates.** Fixes and deploys need approval unless the user
-pre-authorized them in the same prompt ("run ayc-skill, apply the safe fixes
+pre-authorized them in the same prompt ("run ays, apply the safe fixes
 and deploy"). Once past a gate the phase completes in full, verification included.
 The one-prompt form removes the *planning* back-and-forth, not the *safety* gates.
 

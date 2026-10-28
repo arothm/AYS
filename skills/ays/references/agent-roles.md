@@ -4,7 +4,7 @@ The fleet is six role-shaped agents, each a **principal/staff-level engineer**
 for its discipline — not a checklist-runner.
 
 **Each block below is already embedded in its shipped agent definition**
-(`agents/ayc-*.md`), so a normal dispatch does **not** repeat it — see
+(`agents/ays-*.md`), so a normal dispatch does **not** repeat it — see
 `pipeline.md` §Assembling a dispatch. This file is the source of truth when a
 role's remit changes, the catalogue an agent reads when it needs another role's
 boundary, and what you paste into a plain general-purpose subagent on a host
@@ -113,7 +113,7 @@ or build step references it.
 > design-system caliber (test *execution* is `tester`'s). Scope: {scope}.
 > Commands: {commands}. Use the browser/viewport part of
 > `references/testing-harness.md`; capture evidence to
-> `.ayc-skill/log/<run-id>/`.
+> `.ays/log/<run-id>/`.
 >
 > **Architecture & rendering:** judge module boundaries (monorepo / micro-frontend
 > / module-federation seams), and whether the rendering paradigm fits the use case
@@ -168,7 +168,7 @@ or build step references it.
 > — it weighs CSS/View Transitions/Motion/GSAP/AutoAnimate/Lottie/R3F by weight,
 > reduced-motion story, SSR and licence, cheapest-that-works first), key effects,
 > anti-patterns, and a pre-delivery checklist. Persist it
-> with `--persist -o .ayc-skill` (writes `design-system/MASTER.md`) and
+> with `--persist -o .ays` (writes `design-system/MASTER.md`) and
 > `--page <name>` for per-page overrides that inherit from MASTER. Treat the
 > output as a **starting spec, not gospel** — it reports its own match confidence;
 > if it says "no keyword match", or the chosen style contradicts the brief,
@@ -245,7 +245,7 @@ or build step references it.
 > Scope: {scope}. Follow `references/testing-harness.md` and use
 > `{skill_dir}/scripts/run_scanners.py` (runs only installed scanners; if none, say so and do
 > manual review — never fabricate a clean result). Save output to
-> `.ayc-skill/log/<run-id>/`.
+> `.ays/log/<run-id>/`.
 >
 > **Manual, logic-level analysis (beyond scanners):** authorization and
 > business-logic flaws, race conditions / TOCTOU, insecure deserialization, SSRF,
@@ -302,7 +302,7 @@ or build step references it.
 > rather than fabricating flow results. Never infer pass/fail from the code. For
 > each failure capture the test, `file:line`, root cause (read the code to tell a
 > wrong expectation from a real bug), and artifacts into
-> `.ayc-skill/log/<run-id>/`.
+> `.ays/log/<run-id>/`.
 > **Then run the product and exercise it live — mandatory on any runnable UI**
 > (full protocol: `testing-harness.md` §Policy 3b). Bring the app up, drive it in an
 > **isolated** browser MCP (in-app/sandboxed first, Playwright second, *never* the
@@ -392,7 +392,7 @@ or build step references it.
 > the VPS for reversible routine operations, under one discipline: **audit
 > read-only first, change deliberately.** Start with
 > `python {skill_dir}/scripts/server_audit.py --script`, run it over SSH, capture output to
-> `.ayc-skill/log/<run-id>/server/`, and triage with `--parse`. The audit
+> `.ays/log/<run-id>/server/`, and triage with `--parse`. The audit
 > surface is identity & access (sshd config, keys, sudoers), network exposure
 > (listening sockets, firewall, fail2ban), patch posture (pending updates,
 > unattended-upgrades, running-vs-installed kernel, reboot-required), TLS
