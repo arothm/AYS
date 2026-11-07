@@ -1,141 +1,134 @@
 #!/usr/bin/env python3
-"""Build ays.skill deterministically and correctly.
+"""Build ays.skill, the zip that Claude Desktop and Cowork accept as an upload.
 
-The .skill file is a zip of skills/ays/. Building it by hand (or with
-PowerShell Compress-Archive on Windows) produced two validator failures: Windows
-BACKSLASH path separators in the archive, and shipped __pycache__/*.pyc. This
-builds it right — forward-slash arcnames, junk excluded — so desktop/Cowork
-uploads validate without repackaging.
+    python build.py            write ays.skill from skills/ays/
+    python build.py --check    verify ays.skill matches skills/ays/ and is uploadable
 
-Deliberately bundles ONLY skills/ays/. The plugin's `agents/` and
-`hooks/` directories are Claude Code plugin components with no meaning in a
-.skill upload, and `tests/` is developer-only.
+The bundle is deterministic: sorted entries, a fixed timestamp, forward-slash
+paths and LF line endings, so the same source gives the same bytes on Windows
+and Linux. Hand-made zips have failed the upload validator before (backslash
+paths, shipped __pycache__), which is why this script exists.
 
---check also enforces the Agent Skills frontmatter contract, because that is the
-rule the desktop/Cowork upload path actually validates against: outside Claude
-Code only `name`, `description`, `allowed-tools`, `license`, `metadata` and
-`compatibility` are permitted, and any other key is a hard upload error rather
-than an ignored field.
-
-    python build.py            # writes ays.skill
-    python build.py --check    # verify an existing bundle, don't rebuild
+--check enforces the Agent Skills frontmatter contract the upload path applies:
+only the keys in ALLOWED_KEYS, a lowercase-hyphenated name equal to the folder
+name, and a description of at most 1024 characters. Any other key is a hard
+upload error, not an ignored field.
 """
 from __future__ import annotations
-import os, sys, zipfile
+
+import os
+import re
+import sys
+import zipfile
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-    # Windows consoles default to cp1252 and would mangle the em dashes and arrows
-    # this prints. Matches the guard the other helpers already carry.
 except Exception:
     pass
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "skills", "ays")
 OUT = os.path.join(ROOT, "ays.skill")
-EXCLUDE_DIRS = {"__pycache__", ".git", ".pytest_cache", ".mypy_cache", "node_modules"}
-EXCLUDE_EXT = {".pyc", ".pyo", ".pyd"}
-EXCLUDE_NAMES = {".DS_Store", "Thumbs.db"}
+ALLOWED_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
+SKIP_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache"}
+SKIP_EXT = {".pyc", ".pyo"}
+TEXT_EXT = {".md", ".py", ".json", ".csv", ".txt"}
+EPOCH = (1980, 1, 1, 0, 0, 0)
 
 
-def wanted(path):
-    parts = path.replace("\\", "/").split("/")
-    if any(p in EXCLUDE_DIRS for p in parts):
-        return False
-    name = parts[-1]
-    if name in EXCLUDE_NAMES or os.path.splitext(name)[1] in EXCLUDE_EXT:
-        return False
-    return True
+def sources(src: str) -> dict[str, bytes]:
+    """Map archive path -> bytes for every file that belongs in the bundle."""
+    top = os.path.basename(src)
+    files: dict[str, bytes] = {}
+    for dirpath, dirnames, filenames in os.walk(src):
+        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
+        for name in sorted(filenames):
+            if os.path.splitext(name)[1] in SKIP_EXT:
+                continue
+            path = os.path.join(dirpath, name)
+            with open(path, "rb") as f:
+                data = f.read()
+            if os.path.splitext(name)[1] in TEXT_EXT:
+                data = data.replace(b"\r\n", b"\n")
+            rel = os.path.relpath(path, os.path.dirname(src)).replace(os.sep, "/")
+            files[rel if rel.startswith(top + "/") else top + "/" + rel] = data
+    return files
 
 
-def files():
-    for dirpath, dirnames, filenames in os.walk(SRC):
-        dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS]
-        for f in filenames:
-            full = os.path.join(dirpath, f)
-            if wanted(full):
-                yield full
-
-
-def build():
-    if os.path.exists(OUT):
-        os.remove(OUT)
-    n = 0
-    with zipfile.ZipFile(OUT, "w", zipfile.ZIP_DEFLATED) as z:
-        for full in sorted(files()):
-            # arcname: forward slashes, rooted at the skill folder name
-            rel = os.path.relpath(full, os.path.join(ROOT, "skills")).replace(os.sep, "/")
-            z.write(full, rel)
-            n += 1
-    print(f"wrote {os.path.relpath(OUT, ROOT)} — {n} files, {os.path.getsize(OUT):,} bytes")
-    return 0
-
-
-# The Agent Skills spec allows only these keys. Claude Code accepts more, but a
-# .skill carrying an extra key fails desktop/Cowork upload with a hard error.
-SPEC_KEYS = {"name", "description", "allowed-tools", "license", "metadata", "compatibility"}
-DESC_LIMIT = 1024
-
-
-def check_frontmatter(text):
-    """Validate SKILL.md frontmatter against the Agent Skills spec. Returns problems."""
-    problems = []
-    if not text.startswith("---"):
-        return ["SKILL.md has no YAML frontmatter"]
-    fm = text.split("---", 2)[1]
-    keys, desc_lines, current = [], [], None
-    for line in fm.splitlines():
-        if line[:1] not in (" ", "\t", "") and ":" in line:
-            current = line.split(":", 1)[0].strip()
-            keys.append(current)
-            if current == "description":
-                rest = line.split(":", 1)[1].strip()
-                desc_lines = [] if rest in (">-", ">", "|", "|-", "") else [rest]
-        elif current == "description" and line.strip():
-            desc_lines.append(line.strip())
-    for k in keys:
-        if k not in SPEC_KEYS:
-            problems.append(f"frontmatter key {k!r} is not in the Agent Skills spec "
-                            f"(allowed: {', '.join(sorted(SPEC_KEYS))}) — .skill upload would fail")
-    if "description" not in keys:
-        problems.append("frontmatter has no description")
-    else:
-        n = len(" ".join(desc_lines))
-        if n > DESC_LIMIT:
-            problems.append(f"description is {n} chars, over the {DESC_LIMIT} limit")
+def frontmatter_problems(skill_md: str, folder: str) -> list[str]:
+    m = re.match(r"---\n(.*?)\n---\n", skill_md, re.S)
+    if not m:
+        return ["SKILL.md has no frontmatter block"]
+    fields: dict[str, str] = {}
+    for line in m.group(1).splitlines():
+        km = re.match(r"([A-Za-z][\w-]*):\s*(.*)$", line)
+        if km:
+            fields[km.group(1)] = km.group(2).strip()
+    problems = [f"frontmatter key {k!r} is not allowed outside Claude Code"
+                for k in sorted(set(fields) - ALLOWED_KEYS)]
+    name = fields.get("name", "")
+    if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", name):
+        problems.append(f"name {name!r} must be lowercase letters, digits and hyphens")
+    elif name != folder:
+        problems.append(f"name {name!r} must equal the folder name {folder!r}")
+    desc = fields.get("description", "")
+    if not desc:
+        problems.append("description is missing")
+    elif len(desc) > 1024:
+        problems.append(f"description is {len(desc)} characters; the limit is 1024")
     return problems
 
 
-def check(path=OUT):
-    if not os.path.exists(path):
-        print(f"no bundle at {path}")
-        return 1
-    problems = []
-    with zipfile.ZipFile(path) as z:
-        names = z.namelist()
-        for name in names:
-            if "\\" in name:
-                problems.append(f"backslash path: {name}")
-            if "__pycache__" in name or name.endswith((".pyc", ".pyo")):
-                problems.append(f"python bytecode shipped: {name}")
-            if name.rsplit("/", 1)[-1] in EXCLUDE_NAMES:
-                problems.append(f"OS cruft shipped: {name}")
-        skill_md = [n for n in names if n.endswith("/SKILL.md")]
-        if not skill_md:
-            problems.append("no SKILL.md in the bundle")
-        else:
-            problems += check_frontmatter(z.read(skill_md[0]).decode("utf-8"))
-        count = len(names)
-    if problems:
-        print(f"{path}: {len(problems)} PROBLEM(S)")
+def build(src: str = SRC, out: str = OUT) -> int:
+    files = sources(src)
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+        for rel in sorted(files):
+            info = zipfile.ZipInfo(rel, EPOCH)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            z.writestr(info, files[rel])
+    return len(files)
+
+
+def check(src: str = SRC, out: str = OUT) -> list[str]:
+    if not os.path.exists(out):
+        return [f"{os.path.basename(out)} does not exist; run python build.py"]
+    with zipfile.ZipFile(out) as z:
+        bundled = {i.filename: z.read(i) for i in z.infolist() if not i.is_dir()}
+    problems = [f"bad entry {n!r}" for n in bundled
+                if "\\" in n or "__pycache__" in n or os.path.splitext(n)[1] in SKIP_EXT]
+    expected = sources(src)
+    if bundled != expected:
+        changed = sorted(set(bundled) ^ set(expected)) or sorted(
+            n for n in expected if bundled.get(n) != expected[n])
+        problems.append("bundle is stale; run python build.py (differs: "
+                        + ", ".join(changed[:5]) + ")")
+    top = os.path.basename(src)
+    skill_md = expected.get(top + "/SKILL.md")
+    if skill_md is None:
+        problems.append("SKILL.md is missing")
+    else:
+        problems += frontmatter_problems(skill_md.decode("utf-8"), top)
+    return problems
+
+
+def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv == ["--check"]:
+        problems = check()
         for p in problems:
-            print("  " + p)
-        return 1
-    print(f"{path}: OK — {count} entries, forward-slash paths, no bytecode/cruft, "
-          f"spec-legal frontmatter")
+            print("FAIL " + p)
+        if problems:
+            return 1
+        print(f"OK: {os.path.basename(OUT)} matches skills/ays and is uploadable")
+        return 0
+    if argv:
+        print(__doc__)
+        return 2
+    n = build()
+    print(f"wrote {os.path.basename(OUT)}: {n} files")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(check() if "--check" in sys.argv[1:] else (build() or check()))
+    sys.exit(main())
