@@ -33,6 +33,8 @@ RULE = re.compile(r"^- `([^`]+)` (.*)$")
 WHY = re.compile(r"^  - Why: (.*)$")
 ID = re.compile(r"^[A-Z]{3}-\d{3}$")
 REF = re.compile(r"\b[A-Z]{3}-\d{3}\b")
+# Rule areas. Only these prefixes count as rule citations in text.
+AREAS = {"WEB", "OPS", "GIT", "PKG", "BUN", "TWD", "RCT", "AID", "AIF", "MCP", "SKL"}
 MERGE = re.compile(r"((?:[A-Z]{3}-\d{3}(?: and )?)+) → ([A-Z]{3}-\d{3})")
 LINK = re.compile(r"`references/([^`]+\.md)`")
 
@@ -84,17 +86,23 @@ def validate(skill_dir: str) -> list[str]:
             problems.append(f"{name}: {old} is listed as merged but is still a rule")
         if new not in rules:
             problems.append(f"{name}: {old} is merged into {new}, which does not exist")
+    def cites(text):
+        # Terms that merely look like IDs, such as AES-256, are not citations.
+        return [ref for ref in REF.findall(text) if ref[:3] in AREAS]
+
     for rid, (name, rule, why) in rules.items():
+        if rid[:3] not in AREAS:
+            problems.append(f"{name}: {rid} has an unknown area prefix; add it to AREAS in rules.py")
         if not why:
             problems.append(f"{name}: {rid} has no 'Why' line under it")
-        for ref in REF.findall(rule + " " + why):
+        for ref in cites(rule + " " + why):
             if ref in retired:
                 problems.append(f"{name}: {rid} cites {ref}, which was merged; cite its replacement")
             elif ref not in rules:
                 problems.append(f"{name}: {rid} cites {ref}, which does not exist")
     with open(os.path.join(skill_dir, "SKILL.md"), encoding="utf-8") as f:
         skill = f.read()
-    for ref in sorted(set(REF.findall(skill)) - set(rules)):
+    for ref in sorted(set(cites(skill)) - set(rules)):
         problems.append(f"SKILL.md cites {ref}, which does not exist")
     linked = set(LINK.findall(skill))
     present = {n for n in os.listdir(os.path.join(skill_dir, "references")) if n.endswith(".md")}

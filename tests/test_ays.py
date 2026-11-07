@@ -71,9 +71,10 @@ class RulesTest(unittest.TestCase):
         self.assertEqual(rules.validate(SKILL), [])
 
     def test_real_skill_keeps_every_original_number(self):
-        # 423 rules were handed over; 13 duplicates were merged, none dropped.
+        # 423 rules were handed over (13 duplicates merged, none dropped), then
+        # batch 2 (2026-11-07) added 17 new IDs.
         found, merges, _ = rules.load(SKILL)
-        self.assertEqual(len(found) + len(merges), 423)
+        self.assertEqual(len(found) + len(merges), 423 + 17)
 
     def test_real_skill_has_a_why_for_every_rule(self):
         found, _, _ = rules.load(SKILL)
@@ -105,6 +106,14 @@ class RulesTest(unittest.TestCase):
     def test_dangling_cross_reference(self):
         p = self.problems({"a.md": "- `WEB-001` see WEB-999\n"})
         self.assertTrue(any("WEB-999, which does not exist" in x for x in p), p)
+
+    def test_id_like_terms_are_not_citations(self):
+        p = self.problems({"a.md": "- `WEB-001` encrypt with AES-256 and SHA-256\n"})
+        self.assertEqual(p, [])
+
+    def test_unknown_area_prefix(self):
+        p = self.problems({"a.md": "- `XYZ-001` one\n"})
+        self.assertTrue(any("unknown area prefix" in x for x in p), p)
 
     def test_reference_to_merged_rule(self):
         p = self.problems({"a.md": "- `WEB-001` one\n- `WEB-003` see WEB-002\n\n"

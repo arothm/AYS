@@ -34,8 +34,10 @@ the rule does not spell out.
   - Why: Generated front-end code often leaks global CSS, breaks on mobile and skips accessibility, and only checking reveals it.
 - `AID-006` DON'T present generated documentation of complex proprietary business logic, specialized algorithms, or safety-critical boundaries as verified; flag it for review by an engineer who knows the domain, and check that generated comments explain why the code is written that way, not just what it does (see WEB-275)
   - Why: Generated explanations of complex logic can be confidently wrong, and labeled as verified they mislead whoever relies on them.
-- `AID-008` DON'T accept generated code on intuition alone ("vibe coding"): read and understand it, run it and its tests, and commit regularly so any step can be rolled back
-  - Why: Code nobody understands cannot be maintained or trusted, and frequent commits make every step reversible.
+- `AID-008` DON'T accept generated code on intuition alone ("vibe coding"): read and understand it, run it and its tests, commit regularly so any step can be rolled back, and never deploy it to production without passing the automated CI security gates (see OPS-008)
+  - Why: Code nobody understands cannot be maintained or trusted, frequent commits make every step reversible, and CI gates catch the security flaws a quick read misses.
+- `AID-020` DO attach an AI diligence statement, signed by the responsible person, to production code, financial audits and regulatory submissions produced with AI agents, stating which tools were used, for what, and how the output was verified
+  - Why: An agent cannot take responsibility for its output, so a named person must state how it was checked, which gives reviewers and auditors a record to rely on.
 - `AID-011` DO include unit tests and the necessary documentation with new production code, and run them
   - Why: Untested code has no proof it works and no guard against later regressions, and undocumented code is hard for anyone else to use.
 
@@ -45,8 +47,12 @@ the rule does not spell out.
   - Why: These actions cannot be undone, so asking first keeps the user in control of anything that could destroy work.
 - `AID-013` DO match command syntax to the user's shell and OS (bash/zsh, PowerShell, CMD); for example, && chaining works in bash, CMD, and PowerShell 7+ but not in Windows PowerShell 5.1, and irm and other aliases exist only in PowerShell
   - Why: A command in the wrong shell's syntax fails, or worse, does something different from what was intended.
-- `AID-014` DON'T send secrets, credentials, or proprietary source code to third-party services, including other AI APIs, unless the project's data-privacy terms allow it; scrub secrets first
-  - Why: Anything sent to a third party leaves your control and may be logged, kept or used for training.
+- `AID-014` DON'T send secrets, credentials, or proprietary source code to third-party services, including other AI APIs and consumer AI chat apps, unless the project's data-privacy terms allow it; use enterprise plans or APIs whose terms isolate your data, and scrub secrets first
+  - Why: Anything sent to a third party leaves your control and may be logged, kept or used for training, and consumer chat apps usually give the weakest guarantees.
+- `AID-021` DON'T give agentic desktop tools (e.g., Claude Code, Claude Cowork) access beyond the folders a task needs; scope them to specific project directories and enforce it with their permission settings (see AID-012)
+  - Why: An agent can read or change anything it can reach, so a mistake or an injected instruction is limited only by the folders it was given.
+- `AID-022` DON'T run AI tools or extensions that hold company access on unmanaged devices; require SSO, role-based access limits, and routing through the company's API gateway
+  - Why: An unmanaged device is outside the company's security controls, so access held there can be stolen or misused without anyone seeing it.
 - `AID-017` DON'T run autonomous or looping agent workflows without a passing-test exit condition, a maximum iteration count, and a token or time budget
   - Why: Without a clear stop condition and limits, a looping agent can run indefinitely and spend without bound.
 

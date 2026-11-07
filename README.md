@@ -3,7 +3,7 @@
 An Agent Skill that carries Abdullrahman Yasser's engineering knowledge, so that
 when Claude works on a task it does it the way he would himself.
 
-It holds **410 rules** across web (HTML, CSS, JavaScript, delivery, SEO), DevOps,
+It holds **427 rules** across web (HTML, CSS, JavaScript, delivery, SEO), DevOps,
 Git, npm/pnpm, Bun, Tailwind, React, AI-assisted development, LLM-powered
 features, MCP servers and Agent Skills. Every rule carries a one-line **Why**, so
 Claude can judge cases the rule doesn't spell out. On top sits a working method
@@ -74,7 +74,8 @@ tests/test_ays.py              unit tests for rules.py, check.py and build.py
 1. Edit the rule in `skills/ays/references/`. Keep its ID; new rules take the
    next free number in their area, and need a `  - Why:` line directly under
    them. When merging two rules, list the retired ID under the file's
-   `## Merged rules` heading. If `check.py` checks the rule, keep its ID in sync
+   `## Merged rules` heading. A new area prefix must be added to `AREAS` in
+   `rules.py`. If `check.py` checks the rule, keep its ID in sync
    there (a test fails if a checked ID stops existing).
 2. Check and rebuild:
 
@@ -92,7 +93,7 @@ Everything is Python standard library: no install step, no dependencies.
 
 ## Limits
 
-- **The checker covers 67 of 410 rules.** The rest need judgment and are applied
+- **The checker covers 67 of 427 rules.** The rest need judgment and are applied
   by Claude reading the code. The checker reads source text, not a rendered page:
   it parses HTML with the standard library and scans CSS and JavaScript line by
   line with comments and strings blanked out, so it misses breaches that only

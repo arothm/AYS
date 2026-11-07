@@ -6,7 +6,7 @@ license: MIT
 
 # AYS — Abdullrahman Yasser Skill
 
-This skill carries Abdullrahman's own engineering knowledge: 410 rules, each with
+This skill carries Abdullrahman's own engineering knowledge: 427 rules, each with
 a stable ID (`WEB-024`, `GIT-009`, ...) and a "Why" line giving his reason. Do the
 work the way he would: follow the working method below, load the rule files the
 task needs, and apply them. Where a rule doesn't spell a case out, decide by its
@@ -31,7 +31,7 @@ every row that applies; skip the rest.
 | Tailwind projects | `references/tailwind.md` |
 | React projects | `references/react.md` |
 | Any change larger than a one-line fix | `references/ai-assisted-development.md` |
-| Features that call LLMs or ML models | `references/ai-features.md` |
+| Features that call LLMs or ML models, or choosing an AI model or provider | `references/ai-features.md` |
 | MCP servers or clients | `references/mcp-servers.md` |
 | Writing or changing a skill, including this one | `references/agent-skills.md` |
 

@@ -9,7 +9,8 @@ features), MCP, SKL (Agent Skills).
 
 Result: 410 rules. 13 duplicates were merged into another rule; no rule was
 dropped. `python skills/ays/scripts/rules.py show WEB-049` shows where a merged
-number went.
+number went. Later batches are recorded at the end of this file; the current
+total is 427.
 
 ## Corrected
 
@@ -90,3 +91,56 @@ present general practice as Abdullrahman's:
 - Testing strategy beyond E2E (WEB-023) and "ship tests with code" (AID-011)
 - DevOps operations: backups with restore tests, monitoring and alerting,
   rollback, Docker, SSH and firewall hardening
+
+## Batch 2: enterprise AI (2026-11-07)
+
+37 rules received in sections 1.3, 2.4, 3.3, 4.3, 5.3 and 6.4, vetted against
+the existing set and approved by Abdullrahman as proposed. Result: 17 new rules,
+7 existing rules extended, 1 duplicate left unchanged, 4 dropped. Facts checked
+2026-11-07: Opus 4.8 effort levels and adaptive thinking (Anthropic docs),
+prompt-cache pricing (cached reads cost 0.1x input), Claude Mythos 5 access
+through Project Glasswing, Anthropic's AI diligence statement tutorial.
+
+### Extended
+
+| Rule | Batch rules | Added |
+|---|---|---|
+| AID-014 | 1.3-5 | Consumer AI chat apps; use enterprise plans or APIs that isolate data |
+| AIF-005 | 2.4-1, 2.4-4, 4.3-3, 4.3-4 | Classification and data conversion on small models; route by complexity at volume; Sonnet 5.5 as the default, not a mandate, dated |
+| AIF-010 | 1.3-6 | Inline citations and automatic support checks on critical paths (not RAG everywhere, which contradicted AIF-023) |
+| AIF-018 | 5.3-3 | Turn caching on; "up to 90%" corrected to cached input costing about a tenth |
+| AIF-020 | 3.3-4 | Toxic or unauthorized output; never blocklists or regex alone |
+| AIF-025 | 4.3-1 | Small model under a stronger orchestrator, model names dated |
+| AID-008 | 5.3-5 | No production deploy without CI security gates (OPS-008) |
+
+### Added
+
+| Rule | Batch rules | Change from the original wording |
+|---|---|---|
+| AIF-029 | 1.3-1, 2.4-5, 6.4-4 | Merged; HIPAA only for health data; check which features the agreement covers |
+| AIF-030 | 1.3-2, 2.4-5 | AES-256 at rest, TLS in transit; residency includes logs and backups |
+| AIF-031 | 1.3-3 | Dedicated capacity only when volume or an SLA justifies it |
+| AIF-032 | 1.3-4 | Redact secrets and personal data from logs |
+| AIF-033 | 1.3-7, 2.4-2 | Merged; evaluate fallback models before they serve traffic |
+| AIF-034 | 2.4-3 | Cost caveat: OCR or transcription when text is enough |
+| AIF-035 | 2.4-6, 6.4-1 | Merged; leaderboards allowed for shortlisting |
+| AIF-036 | 3.3-1 | Hard constraints enforced in code too (prompts aren't deterministic, AIF-003) |
+| AIF-037 | 3.3-5 | RLHF/RLAIF are training methods; became LLM-as-judge plus human sampling |
+| AIF-038 | 4.3-2, 4.3-5 | Merged; total caps kept (AIF-008), only thinking budgets left to the model |
+| AIF-039 | 4.3-6 | Named Claude Mythos 5 and Project Glasswing |
+| AIF-040 | 6.4-5 | Rewritten as a DO |
+| AIF-041 | 6.4-6 | Fine-tuning last, after evaluation and retrieval (AIF-023) |
+| AIF-042 | 3.3-6 | Interpreted as checking each region's AI and data rules |
+| AID-020 | 5.3-1 | Signed by a named person; states tools, use and verification |
+| AID-021 | 5.3-4 | Enforced with permission settings (AID-012) |
+| AID-022 | 5.3-6 | Wording simplified |
+
+### Not added
+
+| Batch rule | Outcome | Why |
+|---|---|---|
+| 5.3-2 (adopt MCP) | Duplicate of MCP-001 | MCP-002 already limits it |
+| 3.3-2 (mechanistic interpretability audits) | Dropped | A research technique users of hosted models cannot run; AIF-001 covers explainability |
+| 3.3-3 (ASL thresholds) | Dropped | Anthropic's own policy for training models; AIF-008, AIF-019 and AIF-026 cover agent limits |
+| 6.4-2 (embed engineering partners) | Dropped | Hiring advice, not an engineering rule |
+| 6.4-3 (AQe Digital's AI solutions) | Dropped | A vendor advertisement |
