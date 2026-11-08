@@ -18,8 +18,8 @@ reason to follow it; use it to judge cases the rule does not spell out.
   - Why: Memory is usually the first limit on a small server; streaming keeps memory flat whatever the file size, and SQLite removes a whole server to run.
 - `OPS-007` DO build and publish documentation and release notes from the CI pipeline on merge (for example with a docs platform such as Mintlify or GitBook, or a static docs generator), so they update together with code instead of drifting from the API
   - Why: Docs built from the same commit as the code cannot fall out of date with it.
-- `OPS-008` DO run automated checks (linting, type checks, tests, static analysis, security scans) in CI on every push or pull request, make them required gates for merging (including code written by AI), and reserve human review for architecture, trade-offs, security compliance, regulatory auditing, UX design, and product intent
-  - Why: Automated gates catch regressions on every change whoever wrote it, which leaves people free to judge what tools cannot.
+- `OPS-008` DO run automated checks (linting, formatting checks such as prettier --check, type checks, tests, static analysis, security scans) in CI on every push or pull request, make them required gates for merging (including code written by AI), and reserve human review for architecture, trade-offs, security compliance, regulatory auditing, UX design, and product intent; code style is left to the formatter and linter, never debated in review
+  - Why: Automated gates catch regressions on every change whoever wrote it, which leaves people free to judge what tools cannot; style settled by a tool costs no review time and no arguments.
 - `OPS-009` DON'T let CI/CD agents or automation commit directly to protected production branches; require a human-approved pull request, and enforce it with branch protection rules
   - Why: Human review on protected branches is the last check before production; automation that bypasses it can ship anything.
 - `OPS-010` DO account for API rate limits in background scripts and CI pipelines, especially on free tiers: cap concurrency, retry with exponential backoff, and respect Retry-After headers

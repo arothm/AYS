@@ -72,9 +72,9 @@ class RulesTest(unittest.TestCase):
 
     def test_real_skill_keeps_every_original_number(self):
         # 423 rules were handed over (13 duplicates merged, none dropped), then
-        # batch 2 (2026-11-07) added 17 new IDs.
+        # batch 2 (2026-11-07) added 17 new IDs and batch 3 (2026-11-08) 12.
         found, merges, _ = rules.load(SKILL)
-        self.assertEqual(len(found) + len(merges), 423 + 17)
+        self.assertEqual(len(found) + len(merges), 423 + 17 + 12)
 
     def test_real_skill_has_a_why_for_every_rule(self):
         found, _, _ = rules.load(SKILL)

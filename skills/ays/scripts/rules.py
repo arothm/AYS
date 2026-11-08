@@ -34,7 +34,7 @@ WHY = re.compile(r"^  - Why: (.*)$")
 ID = re.compile(r"^[A-Z]{3}-\d{3}$")
 REF = re.compile(r"\b[A-Z]{3}-\d{3}\b")
 # Rule areas. Only these prefixes count as rule citations in text.
-AREAS = {"WEB", "OPS", "GIT", "PKG", "BUN", "TWD", "RCT", "AID", "AIF", "MCP", "SKL"}
+AREAS = {"WEB", "OPS", "GIT", "PKG", "BUN", "TWD", "RCT", "AID", "AIF", "MCP", "SKL", "LNT"}
 MERGE = re.compile(r"((?:[A-Z]{3}-\d{3}(?: and )?)+) → ([A-Z]{3}-\d{3})")
 LINK = re.compile(r"`references/([^`]+\.md)`")
 

@@ -3,8 +3,8 @@
 An Agent Skill that carries Abdullrahman Yasser's engineering knowledge, so that
 when Claude works on a task it does it the way he would himself.
 
-It holds **427 rules** across web (HTML, CSS, JavaScript, delivery, SEO), DevOps,
-Git, npm/pnpm, Bun, Tailwind, React, AI-assisted development, LLM-powered
+It holds **439 rules** across web (HTML, CSS, JavaScript, delivery, SEO), DevOps,
+linting and formatting, Git, npm/pnpm, Bun, Tailwind, React, AI-assisted development, LLM-powered
 features, MCP servers and Agent Skills. Every rule carries a one-line **Why**, so
 Claude can judge cases the rule doesn't spell out. On top sits a working method
 assembled from those rules: plan first, change in small verified steps, prove it
@@ -93,7 +93,7 @@ Everything is Python standard library: no install step, no dependencies.
 
 ## Limits
 
-- **The checker covers 67 of 427 rules.** The rest need judgment and are applied
+- **The checker covers 67 of 439 rules.** The rest need judgment and are applied
   by Claude reading the code. The checker reads source text, not a rendered page:
   it parses HTML with the standard library and scans CSS and JavaScript line by
   line with comments and strings blanked out, so it misses breaches that only

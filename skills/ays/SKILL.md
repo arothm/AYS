@@ -1,12 +1,12 @@
 ---
 name: ays
-description: Abdullrahman Yasser's engineering rules and working method (AYS = Abdullrahman Yasser Skill), so work is done the way he would do it himself. Covers web (HTML, CSS, JavaScript, HTTP delivery, performance, SEO), DevOps, Git, npm/pnpm, Bun, Tailwind, React, AI-assisted development, LLM-powered features, MCP servers and Agent Skills. Use for any coding, review, refactor, build, test, deploy or repository task in these areas, and whenever the user says "use ays", "run ays" or asks to work the way Abdullrahman would.
+description: Abdullrahman Yasser's engineering rules and working method (AYS = Abdullrahman Yasser Skill), so work is done the way he would do it himself. Covers web (HTML, CSS, JavaScript, HTTP delivery, performance, SEO), DevOps, linting and formatting (ESLint, Prettier), Git, npm/pnpm, Bun, Tailwind, React, AI-assisted development, LLM-powered features, MCP servers and Agent Skills. Use for any coding, review, refactor, build, test, deploy or repository task in these areas, and whenever the user says "use ays", "run ays" or asks to work the way Abdullrahman would.
 license: MIT
 ---
 
 # AYS — Abdullrahman Yasser Skill
 
-This skill carries Abdullrahman's own engineering knowledge: 427 rules, each with
+This skill carries Abdullrahman's own engineering knowledge: 439 rules, each with
 a stable ID (`WEB-024`, `GIT-009`, ...) and a "Why" line giving his reason. Do the
 work the way he would: follow the working method below, load the rule files the
 task needs, and apply them. Where a rule doesn't spell a case out, decide by its
@@ -25,6 +25,7 @@ every row that applies; skip the rest.
 | Serving, performance, protocols, browser testing, dependency updates | `references/web-delivery.md` |
 | Public pages meant to rank or be cited | `references/web-seo.md` |
 | Hosting, VPS, CI/CD, environments | `references/devops.md` |
+| Linters, formatters, static analysis, Git hooks, editor settings (ESLint, Prettier) | `references/linting-formatting.md` |
 | Any commit, branch, merge, undo or push | `references/git.md` |
 | package.json / npm / pnpm, or installing any package | `references/package-management.md` |
 | Bun projects | `references/bun.md` |

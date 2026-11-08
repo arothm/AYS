@@ -5,12 +5,12 @@ Every change made to Abdullrahman's original list (423 rules, received
 for word. Original numbers are kept as IDs: Web #24 is `WEB-024`, Git #9 is
 `GIT-009`. Prefixes: WEB, OPS (DevOps), GIT, PKG (package management), BUN, TWD
 (Tailwind), RCT (React), AID (AI-assisted development), AIF (AI-powered
-features), MCP, SKL (Agent Skills).
+features), MCP, SKL (Agent Skills), LNT (linting and formatting, added in batch 3).
 
 Result: 410 rules. 13 duplicates were merged into another rule; no rule was
 dropped. `python skills/ays/scripts/rules.py show WEB-049` shows where a merged
 number went. Later batches are recorded at the end of this file; the current
-total is 427.
+total is 439.
 
 ## Corrected
 
@@ -144,3 +144,41 @@ through Project Glasswing, Anthropic's AI diligence statement tutorial.
 | 3.3-3 (ASL thresholds) | Dropped | Anthropic's own policy for training models; AIF-008, AIF-019 and AIF-026 cover agent limits |
 | 6.4-2 (embed engineering partners) | Dropped | Hiring advice, not an engineering rule |
 | 6.4-3 (AQe Digital's AI solutions) | Dropped | A vendor advertisement |
+
+## Batch 3: static analysis, ESLint and Prettier (2026-11-08)
+
+24 rules received in four groups (labelled here S1-S6 static analysis, E1-E6
+ESLint, P1-P6 Prettier, C1-C6 ESLint with Prettier, DOs before DON'Ts), vetted
+and approved by Abdullrahman as proposed. Result: a new area, LNT (linting and
+formatting, `references/linting-formatting.md`), with 12 rules, and OPS-008
+extended; nothing dropped. Facts checked 2026-11-08: ESLint 10 removed the
+eslintrc format and ESLint 9 reached end of life on 2026-08-06 (eslint.org);
+eslint-config-prettier's `/flat` entry and CLI helper (its README); Prettier 3
+skips node_modules and follows .gitignore by default (prettier.io); ESLint's
+formatting rules are deprecated (eslint.org).
+
+The Prettier rules are scoped to projects that use Prettier, so they agree with
+TWD-003 (don't add Prettier unasked).
+
+### Extended
+
+| Rule | Batch rules | Added |
+|---|---|---|
+| OPS-008 | S4, P5, P6, C6 | Formatting checks such as `prettier --check` in the CI gates; code style left to tools, never debated in review |
+
+### Added
+
+| Rule | Batch rules | Change from the original wording |
+|---|---|---|
+| LNT-001 | S1, S6 | Merged; propose the tools in existing projects instead of adding them unasked |
+| LNT-002 | E1, E4, P1, P4 | Merged into one "local, pinned tools" rule |
+| LNT-003 | E2 | `eslint:recommended` updated to `js.configs.recommended` (eslintrc removed in ESLint 10) |
+| LNT-004 | E6 | Tighten in small steps (AID-002) |
+| LNT-005 | S3 | Named ESLint's `complexity` rule |
+| LNT-006 | E3, E5 | Merged; a reason after `--` added |
+| LNT-007 | S5 | "Don't ignore" became fix, or suppress with a recorded reason |
+| LNT-008 | S2 | Same checks kept in CI, since hooks can be skipped |
+| LNT-009 | C1, C2, C3, C5 | Merged; `"prettier"` extends entry updated to `eslint-config-prettier/flat` |
+| LNT-010 | C4 | Unchanged in substance |
+| LNT-011 | P2 | Narrowed: Prettier 3 already skips node_modules; reason changed from performance to generated files |
+| LNT-012 | P3 | VS Code example added |
